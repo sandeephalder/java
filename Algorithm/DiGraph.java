@@ -1,152 +1,151 @@
-/*
-package com.java.algo1;
+package com.java.algo2;
 
-
-import java.io.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Stack;
 
 public class DiGraph {
 
-    String line = "";
-    int V, E;
-    ArrayList[] list, reverse;
-    boolean visited[];
-    int edgeto[];
-    ArrayList<Integer> reverseList = new ArrayList<>();
+    List arr[] ,rev_arr[];
+    boolean visited[],rev_visited[];
+    int N=10,connected[];
+    Stack<Integer> reverse_postorder = new Stack<>();
 
 
 
-    DiGraph() throws IOException {
-        File file = new File("C:\\Users\\haldes2\\Documents\\temp\\graph.txt");
-        FileReader f_stream = new FileReader(file);
-        BufferedReader reader = new BufferedReader(f_stream);
-        V = new Integer(reader.readLine());
-        E = new Integer(reader.readLine());
-        list = new ArrayList[V + 1];
-        reverse = new ArrayList[V + 1];
-        visited = new boolean[V + 1];
-        edgeto = new int[V + 1];
-        for (int i = 0; i <= V; i++) {
-            list[i] = new ArrayList();
-            reverse[i] = new ArrayList();
-            visited[i] = false;
-            edgeto[i] = i;
-        }
-        int src, dest;
-        while ((line = reader.readLine()) != null) {
-            src = new Integer(line.split(" ")[0]);
-            dest = new Integer(line.split(" ")[1]);
-            add(src, dest);
-        }
-        //print();
-        //dfs(1); //==>1==>2==>9==>5==>4==>3==>6==>7==>8==>10
-        //topologicalSort(1);//==>9==>2==>3==>4==>7==>10==>8==>6==>5
-        for(int i=1;i<=V;i++)
-            if(!visited[i])
-                reversePostOrder(i);
-
-        for (int i = 0; i <= V; i++)
+    DiGraph(){
+        arr = new ArrayList[N];
+        rev_arr = new ArrayList[N];
+        visited =new  boolean[N];
+        rev_visited =new  boolean[N];
+        connected =new int[N];
+        for(int i=0;i< arr.length;i++){
             visited[i]=false;
-
-        System.out.println(reverseList);
-        int i=0;
-        for(int v:reverseList)
-        {
-
-            if(!visited[v]){
-                //System.out.println("Generation="+i++);
-                dfs(v,i++);
-            }
-
+            rev_visited[i]=false;
+            arr[i]=new ArrayList<Integer>();
+            rev_arr[i]=new ArrayList<Integer>();
+            connected[i]=i;
         }
 
+
     }
 
-    public static void main(String... args) {
-        try {
-            DiGraph graph = new DiGraph();
-        } catch (IOException e) {
-            e.printStackTrace();
+    public static void main(String ... ar){
+        DiGraph graph = new DiGraph();
+        graph.addNode(1,3);
+        graph.addNode(5,1);
+        graph.addNode(1,8);
+        graph.addNode(3,6);
+        graph.addNode(9,3);
+        graph.addNode(8,4);
+        graph.addNode(6,0);
+        graph.addNode(6,7);
+        graph.addNode(6,2);
+        graph.addNode(3,5);
+
+
+       /* int j=0;
+
+        for(int i=0;i<10;i++){
+            if(!graph.visited[i])
+                graph.dfs(i,j++);
+        }*/
+
+        //graph.dfs(1,1);
+
+      /*  for(int i=0;i<10;i++)
+            graph.visited[i]=false;
+        System.out.println();*/
+       /* for(int i=0;i<10;i++)
+            System.out.print("==>"+graph.connected[i]);
+
+        System.out.println(graph.isConnected(1,3));
+        System.out.println(graph.isConnected(2,9));
+*/
+
+               /* graph.topological(1);*/
+
+        for(int i=0;i<10;i++){
+            if(!graph.rev_visited[i])
+                graph.reverse_dfs(i);
         }
 
-    }
+        System.out.println();
+        int j=0;
+        while(!graph.reverse_postorder.isEmpty()){
+                int v= Integer.parseInt(graph.reverse_postorder.pop().toString());
+                if(!graph.visited[v]){
 
-    private void add(int src, int dest) {
-        //System.out.println(src + "=>" + dest);
-        list[src].add(dest);
-        reverse[dest].add(src);
-    }
-
-    private void print() {
-        var i = 0;
-        for (var li : list)
-            System.out.println(i++ + "[==>]" + li);
-
-    }
-
-    private ArrayList adj(int src) {
-        return list[src];
-    }
-
-    private ArrayList revAdj(int src) {
-        return list[src];
-    }
-
-
-    private void dfs(int index,int i) {
-        visited[index] = true;
-        System.out.print("==>("+i+")" + index);
-        for (Object obj : adj(index)) {
-            int v = (Integer) obj;
-            if (!visited[v])
-                dfs(v,i);
-        }
-    }
-
-    private void reversePostOrder(int src) {
-        visited[src] = true;
-
-        for (Object obj : revAdj(src)) {
-            int v = (Integer) obj;
-            if (!visited[v]) {
-                reversePostOrder(v);
-
-            }
-
-        }
-        reverseList.add(src);
-    }
-
-    private void bfs(int index) {
-        LinkedList<Integer> queue = new LinkedList<>();
-        queue.add(index);
-        visited[index] = true;
-        System.out.print("==>" + index);
-        while (!queue.isEmpty()) {
-            int v = queue.removeFirst();
-            for (Object obj : adj(v)) {
-                int w = (Integer) obj;
-                if (!visited[w]) {
-                    queue.add(w);
-                    System.out.print("==>" + w);
-                    visited[w] = true;
+                    graph.dfs(v,j++);
                 }
-            }
+
         }
+
+        for(int i=0;i<10;i++)
+            System.out.print("==>"+graph.connected[i]);
+
 
     }
 
-    private void topologicalSort(int index) {
-        visited[index] = true;
-        for (var obj : adj(index)) {
-            int v = (Integer) obj;
-            if (!visited[v]) {
-                topologicalSort(v);
-                System.out.print("==>" + v);
+    private boolean isConnected(int v,int w){
+        return connected[v]==connected[w];
+    }
+
+    private void addNode(int v, int k){
+        arr[v].add(k);
+        rev_arr[k].add(v);
+    }
+
+    private List<Integer> adj(int v){
+        return arr[v];
+    }
+
+    private List<Integer> rev_adj(int v){
+        return rev_arr[v];
+    }
+
+    private void dfs(int v,int l){
+        visited[v]=true;
+        connected[v]=l;
+        System.out.println("==> Node:"+v+" Component: "+ l);
+        for(int k:adj(v)){
+            if(!visited[k])
+                dfs(k,l);
+        }
+    }
+
+    private void reverse_dfs(int v){
+        rev_visited[v]=true;
+
+        for(int k:rev_adj(v)){
+            if(!rev_visited[k])
+                reverse_dfs(k);
+        }
+        reverse_postorder.push(v);
+    }
+
+    private void topological(int v){
+        visited[v]=true;
+
+        for(int k:adj(v)){
+            if(!visited[k])
+                topological(k);
+        }
+        System.out.print("==>"+v);
+    }
+
+
+    private void bfs(int v){
+        java.util.LinkedList<Integer> bfs = new LinkedList<>();
+        bfs.push(v);
+        while(!bfs.isEmpty()){
+            int k = bfs.pop();
+            visited[k]=true;
+            System.out.print("==>"+k);
+            for(int r:adj(k)){
+                if(!visited[r]) bfs.push(r);
             }
         }
     }
 }
-*/
